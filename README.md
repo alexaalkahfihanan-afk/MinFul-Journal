@@ -1,20 +1,17 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+<img width="1919" height="991" alt="image" src="https://github.com/user-attachments/assets/6a08d7b1-ada7-4840-9845-f48a172b3b76" />
 
-# Run and deploy your AI Studio app
+<h1>🌿 Mindful Journal</h1>
 
-This contains everything you need to run your app locally.
+Aplikasi jurnal harian yang sederhana dan tenang untuk merefleksikan hari, melepas beban, dan terus berkembang.
 
-View your app in AI Studio: https://ai.studio/apps/6c6090e9-5bef-4a17-82a6-8fee4fea8dc9
+<h1>✨ Fitur</h1>
 
-## Run Locally
+📝 Tulis dan simpan jurnal harian<br>
+🎨 Tampilan bersih dan minimalis yang menenangkan<br>
+🔒 Catatanmu tersimpan dengan aman
 
-**Prerequisites:**  Node.js
+<h1>🛠️ Teknologi yang Digunakan</h1>
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+Framework: Next.js / React
+Styling: Tailwind CSS
+Deployment: Vercel
