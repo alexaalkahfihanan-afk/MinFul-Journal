@@ -1,0 +1,6 @@
+{
+  "name": "Mindful Journal & AI Sage",
+  "description": "Jurnal harian personal yang memberikan wawasan dan motivasi cerdas berbasis AI berdasarkan catatan Anda.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["AI Insights", "Local Storage", "Personal Journaling"]
+}
