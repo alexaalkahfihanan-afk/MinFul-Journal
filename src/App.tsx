@@ -8,21 +8,14 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   Plus, 
   Trash2, 
-  Sparkles, 
   Calendar, 
   ChevronRight, 
   X, 
-  Quote,
-  Loader2,
   Tag,
   Hash,
   Edit3,
   BookOpen
 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
-
-// Initialize Gemini API
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 interface JournalEntry {
   id: string;
@@ -45,8 +38,6 @@ export default function App() {
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
   const [itemToDelete, setItemToDelete] = useState<string | null>(null);
   const [activeTag, setActiveTag] = useState<string | null>(null);
-  const [aiInsight, setAiInsight] = useState<string | null>(null);
-  const [isLoadingAi, setIsLoadingAi] = useState(false);
 
   // Load entries from localStorage
   useEffect(() => {
@@ -130,29 +121,6 @@ export default function App() {
     }
   };
 
-  const getAiInsight = async () => {
-    if (entries.length === 0) return;
-    
-    setIsLoadingAi(true);
-    setAiInsight(null);
-
-    try {
-      const recentContext = entries.slice(0, 5).map(e => `${e.date}: ${e.title} - ${e.content}`).join('\n\n');
-      
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Berikut adalah beberapa catatan jurnal harian saya belakangan ini:\n\n${recentContext}\n\nBerdasarkan catatan ini, berikan satu "Pesan Bijak" (Daily Wisdom) atau ringkasan reflektif singkat dalam Bahasa Indonesia. Buatlah pesan yang puitis, memotivasi, dan menenangkan. Gunakan gaya bahasa seorang penasihat yang bijaksana.`,
-      });
-
-      setAiInsight(response.text || "Kesunyian terkadang memberikan jawaban yang paling jujur.");
-    } catch (error) {
-      console.error("AI Error:", error);
-      setAiInsight("Maaf, penasihat AI sedang beristirahat. Silakan coba lagi nanti.");
-    } finally {
-      setIsLoadingAi(false);
-    }
-  };
-
   const allTags = Array.from(new Set(entries.flatMap(e => e.tags || [])));
   const filteredEntries = activeTag ? entries.filter(e => e.tags?.includes(activeTag)) : entries;
 
@@ -174,7 +142,7 @@ export default function App() {
             transition={{ delay: 0.2 }}
             className="text-slate-500 font-medium tracking-widest uppercase text-xs"
           >
-            Ruang Refleksi & Kebijaksanaan AI
+            Ruang Refleksi Pribadi
           </motion.p>
         </div>
 
@@ -189,74 +157,10 @@ export default function App() {
         </motion.button>
       </header>
 
-      <main className="px-6 md:px-12 max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <main className="px-6 md:px-12 max-w-5xl mx-auto">
         
-        {/* Sidebar / AI Insight Section */}
-        <section className="lg:col-span-4 space-y-8">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm space-y-6 relative overflow-hidden"
-          >
-            <div className="flex items-center justify-between relative z-10">
-              <h3 className="font-serif text-2xl">Pesan Bijak</h3>
-              <Sparkles className="text-orange-400" size={20} />
-            </div>
-            
-            <div className="min-h-[120px] flex flex-col justify-center relative z-10">
-              {isLoadingAi ? (
-                <div className="flex flex-col items-center justify-center gap-3 text-slate-400 animate-pulse">
-                  <Loader2 className="animate-spin" />
-                  <p className="text-sm italic">Merenungkan catatan Anda...</p>
-                </div>
-              ) : aiInsight ? (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="space-y-4"
-                >
-                  <Quote className="text-slate-200 rotate-180" size={40} />
-                  <p className="font-serif italic text-lg leading-relaxed text-slate-700">
-                    {aiInsight}
-                  </p>
-                </motion.div>
-              ) : (
-                <p className="text-slate-400 italic text-sm text-center">
-                  Tulis beberapa catatan untuk mendapatkan wawasan pribadi dari Sang Bijak.
-                </p>
-              )}
-            </div>
-
-            <button
-              onClick={getAiInsight}
-              disabled={isLoadingAi || entries.length === 0}
-              className="w-full py-3 px-4 bg-orange-50 text-orange-600 rounded-xl font-medium text-sm hover:bg-orange-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed group flex items-center justify-center gap-2"
-            >
-              <Sparkles size={16} className="group-hover:animate-pulse" />
-              {entries.length === 0 ? 'Tulis dulu catatanmu' : 'Minta Nasihat AI'}
-            </button>
-
-            {/* Decorative background element */}
-            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-orange-50 rounded-full blur-3xl opacity-50" />
-          </motion.div>
-
-          <div className="hidden lg:block p-8 space-y-4">
-              <h4 className="text-xs uppercase tracking-widest text-slate-400 font-bold">Statistik</h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-slate-50 p-4 rounded-2xl">
-                  <p className="text-2xl font-serif">{entries.length}</p>
-                  <p className="text-[10px] uppercase text-slate-500">Momen</p>
-                </div>
-                <div className="bg-slate-50 p-4 rounded-2xl">
-                  <p className="text-2xl font-serif">{Math.min(entries.length, 12)}</p>
-                  <p className="text-[10px] uppercase text-slate-500">Level Refleksi</p>
-                </div>
-              </div>
-          </div>
-        </section>
-
         {/* Entry List */}
-        <section className="lg:col-span-8 space-y-6">
+        <section className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
             <h2 className="font-serif text-3xl">Arsip Catatan</h2>
             
@@ -548,7 +452,7 @@ export default function App() {
 
       {/* Footer Decor */}
       <footer className="max-w-5xl mx-auto px-12 py-12 text-center text-slate-300 text-[10px] uppercase tracking-[0.2em] font-bold">
-        Dibangun dengan ketenangan & AI
+        Dibangun dengan ketenangan
       </footer>
     </div>
   );
